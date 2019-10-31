@@ -2,6 +2,7 @@ package middlewares
 
 import (
 	"fmt"
+	"log"
 	"net/http"
 	"strings"
 	"time"
@@ -29,6 +30,7 @@ func (c *OIDCClient) verifyToken(t string) (*verifier.Jwt, error) {
 		if expClaim != nil {
 			if exp, ok := expClaim.(int64); ok {
 				expTime := time.Unix(exp, 0)
+				log.Println("Token", t, "has been found from cache with expiration", expTime)
 				if !expTime.After(time.Now()) {
 					delete(tokens, t)
 					return nil, fmt.Errorf("Token expeired: %s", t)
@@ -38,6 +40,7 @@ func (c *OIDCClient) verifyToken(t string) (*verifier.Jwt, error) {
 		result := verifier.Jwt{Claims: claims}
 		return &result, nil
 	}
+	log.Println("Token", t, "was not found and will be validated")
 
 	tv := map[string]string{}
 	tv["aud"] = "api://default"
