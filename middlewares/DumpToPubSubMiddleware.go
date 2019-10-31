@@ -1,4 +1,4 @@
-package gcp
+package middlewares
 
 import (
 	"encoding/json"
@@ -6,7 +6,6 @@ import (
 	"net/http"
 	"os"
 
-	"github.com/Good-Will/gateway/middlewares"
 	"github.com/Good-Will/gateway/util"
 )
 
@@ -14,7 +13,7 @@ import (
 func NewDumpToPubSubMiddleware() func(next http.Handler) http.Handler {
 	projectID := os.Getenv("GOOGLE_CLOUD_PROJECT")
 	if projectID != "" {
-		return middlewares.NewDumpMiddleware(func(dump *middlewares.RoundtripDump) {
+		return NewDumpMiddleware(func(dump *RoundtripDump) {
 			marshalledDump, _ := json.Marshal(dump)
 
 			g := util.GooglePubSub{}
@@ -25,6 +24,6 @@ func NewDumpToPubSubMiddleware() func(next http.Handler) http.Handler {
 			}
 		})
 	} else {
-		return middlewares.NewDumpToLogMiddleware()
+		return NewDumpToLogMiddleware()
 	}
 }
