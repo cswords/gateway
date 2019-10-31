@@ -27,8 +27,8 @@ func NewOIDCClient(clientID string, issuer string) *OIDCClient {
 func (c *OIDCClient) verifyToken(t string) (*verifier.Jwt, error) {
 	if claims, ok := tokens[t]; ok {
 		if expClaim, ok := claims["exp"]; ok {
-			if exp, ok := expClaim.(int64); ok {
-				expTime := time.Unix(exp, 0)
+			if exp, ok := expClaim.(float64); ok {
+				expTime := time.Unix(int64(exp), 0)
 				log.Println("Token", t, "has been found from cache with expiration", expTime)
 				if !expTime.After(time.Now()) {
 					delete(tokens, t)
