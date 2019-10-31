@@ -6,7 +6,6 @@ import (
 	"github.com/Good-Will/gateway/configuration"
 	"github.com/Good-Will/gateway/handlers"
 	"github.com/Good-Will/gateway/middlewares"
-	"github.com/Good-Will/gateway/middlewares/gcp"
 
 	"github.com/gorilla/mux"
 )
@@ -29,13 +28,13 @@ func main() {
 				c := middlewares.NewOIDCClient(clientID, issuer)
 				rModule.Use(middlewares.NewOktaAuthMiddleware(c))
 			case "auth-appengine-cron":
-				rModule.Use(gcp.CronMiddleware)
+				rModule.Use(middlewares.CronMiddleware)
 			case "auth-appengine-task":
-				rModule.Use(gcp.TaskMiddleware)
+				rModule.Use(middlewares.TaskMiddleware)
 			case "dump-to-log":
 				rModule.Use(middlewares.NewDumpToLogMiddleware())
 			case "dump-to-pubsub":
-				rModule.Use(gcp.NewDumpToPubSubMiddleware())
+				rModule.Use(middlewares.NewDumpToPubSubMiddleware())
 			default:
 			}
 		}
