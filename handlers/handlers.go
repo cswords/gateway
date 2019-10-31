@@ -29,9 +29,11 @@ func NewProxyHandler(rawurl string, onProxyAction func(http.ResponseWriter, *htt
 			if onProxyAction != nil {
 				onProxyAction(w, r)
 			}
+			q := r.URL.RawQuery
 			// request will be copied
 			r.Host = targetURL.Host
 			r.URL, _ = url.Parse(funcURL) // TODO: process path wildcard
+			r.URL.RawQuery = q
 			reverseProxy.ServeHTTP(w, r)
 		}
 	}
