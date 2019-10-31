@@ -1,0 +1,12 @@
+server:
+  port: 8080
+  routers:
+    - prefix: /api
+      middlewares:
+        - type: cors
+        - type: dump-to-log
+      handlers:
+        - path: /ip
+          type: reverse-proxy
+          config: 
+            url: "https://api.ipify.org?format=json"
