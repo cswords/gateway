@@ -81,9 +81,11 @@ func dumpRequest(r *http.Request) *RequestDump {
 	for lineNo, line := range reqLines {
 		if lineNo == 0 {
 			lineSplit := strings.Split(line, " ")
-			rStruct.Method = lineSplit[0]
-			rStruct.Target = lineSplit[1]
-			rStruct.Protocol = lineSplit[2]
+			if len(lineSplit) > 2 {
+				rStruct.Method = lineSplit[0]
+				rStruct.Target = lineSplit[1]
+				rStruct.Protocol = lineSplit[2]
+			}
 		} else if !inBody {
 			lineSplit := strings.Split(line, ": ")
 			if len(lineSplit) >= 2 {
