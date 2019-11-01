@@ -25,6 +25,7 @@ func NewProxyHandler(rawurl string, onProxyAction func(http.ResponseWriter, *htt
 		if subPath, ok := vars["after_gateway_api_sub_path"]; ok {
 			funcURL = funcURL + subPath
 		}
+		setCors(w.Header())
 		if r.Method != http.MethodOptions {
 			if onProxyAction != nil {
 				onProxyAction(w, r)
@@ -35,9 +36,7 @@ func NewProxyHandler(rawurl string, onProxyAction func(http.ResponseWriter, *htt
 			r.URL.RawQuery = q
 			// request will be copied
 			reverseProxy.ServeHTTP(w, r)
-			setCors(w.Header())
 		} else {
-			setCors(w.Header())
 			w.WriteHeader(http.StatusNoContent)
 		}
 	}
