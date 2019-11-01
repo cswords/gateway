@@ -35,11 +35,21 @@ func NewProxyHandler(rawurl string, onProxyAction func(http.ResponseWriter, *htt
 			r.URL.RawQuery = q
 			// request will be copied
 			reverseProxy.ServeHTTP(w, r)
+			setCors(w.Header())
 		} else {
-			w.Header().Set("Access-Control-Allow-Origin", "*")  // Temporarily add this before fixing cors middleware
-			w.Header().Set("Access-Control-Allow-Headers", "*") // Temporarily add this before fixing cors middleware
+			setCors(w.Header())
 			w.WriteHeader(http.StatusNoContent)
 		}
+	}
+}
+
+// Temporarily add this before fixing cors middleware
+func setCors(h http.Header) {
+	if h.Get("Access-Control-Allow-Origin") == "" {
+		h.Set("Access-Control-Allow-Origin", "*")
+	}
+	if h.Get("Access-Control-Allow-Headers") == "" {
+		h.Set("Access-Control-Allow-Headers", "*")
 	}
 }
 
