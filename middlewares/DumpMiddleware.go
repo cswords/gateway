@@ -23,6 +23,8 @@ func NewDumpMiddleware(dumpAction func(*RoundtripDump)) func(next http.Handler) 
 				next.ServeHTTP(&sw, r)
 				dump := dumpRoundtrip(&sw, r)
 				go dumpAction(dump)
+			} else {
+				next.ServeHTTP(w, r)
 			}
 		})
 	}
