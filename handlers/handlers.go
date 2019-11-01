@@ -36,6 +36,8 @@ func NewProxyHandler(rawurl string, onProxyAction func(http.ResponseWriter, *htt
 			r.URL.RawQuery = q
 			// request will be copied
 			reverseProxy.ServeHTTP(w, r)
+		} else {
+			w.WriteHeader(http.StatusNoContent)
 		}
 	}
 }
