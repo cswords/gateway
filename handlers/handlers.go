@@ -25,7 +25,6 @@ func NewProxyHandler(rawurl string, onProxyAction func(http.ResponseWriter, *htt
 		if subPath, ok := vars["after_gateway_api_sub_path"]; ok {
 			funcURL = funcURL + subPath
 		}
-		setCors(w.Header())
 		if r.Method != http.MethodOptions {
 			if onProxyAction != nil {
 				onProxyAction(w, r)
@@ -36,19 +35,15 @@ func NewProxyHandler(rawurl string, onProxyAction func(http.ResponseWriter, *htt
 			r.URL.RawQuery = q
 			// request will be copied
 			reverseProxy.ServeHTTP(w, r)
+			// Temporarily add this before fixing cors middleware
+			w.Header()["Access-Control-Allow-Origin"] = []string{"*"}
+			w.Header()["Access-Control-Allow-Headers"] = []string{"*"}
 		} else {
+			// Temporarily add this before fixing cors middleware
+			w.Header().Set("Access-Control-Allow-Origin", "*")
+			w.Header().Set("Access-Control-Allow-Headers", "*")
 			w.WriteHeader(http.StatusNoContent)
 		}
-	}
-}
-
-// Temporarily add this before fixing cors middleware
-func setCors(h http.Header) {
-	if h.Get("Access-Control-Allow-Origin") == "" {
-		h.Set("Access-Control-Allow-Origin", "*")
-	}
-	if h.Get("Access-Control-Allow-Headers") == "" {
-		h.Set("Access-Control-Allow-Headers", "*")
 	}
 }
 
@@ -64,4 +59,38 @@ func HandleProxyFunc(r *mux.Router, path string, rawurl string, onProxyAction fu
 	}
 	proxyHandler := NewProxyHandler(rawurl, onProxyAction)
 	r.HandleFunc(path, proxyHandler).Methods(http.MethodGet, http.MethodPut, http.MethodPatch, http.MethodPost, http.MethodOptions)
+}
+
+type singleHeaderReponseWriter struct {
+	http.ResponseWriter
+	header http.Header
+}
+
+// Header TODO
+func (w singleHeaderReponseWriter) Header() http.Header {
+	if w.header == nil {
+
+	}
+	return w.header
+}
+
+// Write TODO
+func (w singleHeaderReponseWriter) Write(b []byte) (i int, e error) {
+	i, e = w.ResponseWriter.Write(b)
+	return
+}
+
+// WriteHeader TODO
+func (w singleHeaderReponseWriter) WriteHeader(statusCode int) {
+	w.ResponseWriter.WriteHeader(statusCode)
+}
+
+type nonDuplicateHeader struct {
+	http.Header
+}
+
+func (h nonDuplicateHeader) Set(key, value string) {
+	if _, ok := h.Header[key]; !ok {
+		h.Header.Set(key, value)
+	}
 }
