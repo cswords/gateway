@@ -25,25 +25,51 @@ func NewProxyHandler(rawurl string, onProxyAction func(http.ResponseWriter, *htt
 		if subPath, ok := vars["after_gateway_api_sub_path"]; ok {
 			funcURL = funcURL + subPath
 		}
+		// Temporarily add this before fixing cors middleware
+		w.Header().Set("Access-Control-Allow-Origin", "*")
+		w.Header().Set("Access-Control-Allow-Headers", "*")
+		sw := ResponseWriter{ResponseWriter: w}
 		if r.Method != http.MethodOptions {
 			if onProxyAction != nil {
 				onProxyAction(w, r)
 			}
-			q := r.URL.RawQuery
+			rawQuery := r.URL.RawQuery
 			r.Host = targetURL.Host
 			r.URL, _ = url.Parse(funcURL)
-			r.URL.RawQuery = q
+			r.URL.RawQuery = rawQuery
 			// request will be copied
-			reverseProxy.ServeHTTP(w, r)
-			// Temporarily add this before fixing cors middleware
-			w.Header()["Access-Control-Allow-Origin"] = []string{"*"}
-			w.Header()["Access-Control-Allow-Headers"] = []string{"*"}
+			reverseProxy.ServeHTTP(sw, r)
 		} else {
-			// Temporarily add this before fixing cors middleware
-			w.Header().Set("Access-Control-Allow-Origin", "*")
-			w.Header().Set("Access-Control-Allow-Headers", "*")
-			w.WriteHeader(http.StatusNoContent)
+			sw.WriteHeader(http.StatusNoContent)
 		}
+	}
+}
+
+// ResponseWriter TODO
+type ResponseWriter struct {
+	http.ResponseWriter
+}
+
+// Header TODO
+func (w ResponseWriter) Header() http.Header {
+	return w.ResponseWriter.Header()
+}
+
+// Write TODO
+func (w ResponseWriter) Write(b []byte) (int, error) {
+	return w.ResponseWriter.Write(b)
+}
+
+// WriteHeader TODO
+func (w ResponseWriter) WriteHeader(statusCode int) {
+	deduplicate(w.Header(), "Access-Control-Allow-Origin")
+	deduplicate(w.Header(), "Access-Control-Allow-Headers")
+	w.ResponseWriter.WriteHeader(statusCode)
+}
+
+func deduplicate(h http.Header, key string) {
+	if v := h[key]; len(v) > 1 {
+		h[key] = []string{v[0]}
 	}
 }
 
