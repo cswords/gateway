@@ -35,6 +35,8 @@ func NewProxyHandler(rawurl string, onProxyAction func(http.ResponseWriter, *htt
 			r.URL, _ = url.Parse(funcURL) // TODO: process path wildcard
 			r.URL.RawQuery = q
 			reverseProxy.ServeHTTP(w, r)
+		} else {
+			w.Header().Set("Access-Control-Allow-Origin", "*")
 		}
 	}
 }
