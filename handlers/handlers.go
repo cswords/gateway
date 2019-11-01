@@ -20,6 +20,7 @@ func NewProxyHandler(rawurl string, onProxyAction func(http.ResponseWriter, *htt
 	reverseProxy := httputil.NewSingleHostReverseProxy(targetURL)
 
 	return func(w http.ResponseWriter, r *http.Request) {
+		w.Header().Set("Access-Control-Allow-Origin", "*") // Temporarily add this before fixing cors middleware
 		vars := mux.Vars(r)
 		funcURL := rawurl
 		if subPath, ok := vars["after_gateway_api_sub_path"]; ok {
@@ -35,8 +36,6 @@ func NewProxyHandler(rawurl string, onProxyAction func(http.ResponseWriter, *htt
 			r.URL, _ = url.Parse(funcURL) // TODO: process path wildcard
 			r.URL.RawQuery = q
 			reverseProxy.ServeHTTP(w, r)
-		} else {
-			w.Header().Set("Access-Control-Allow-Origin", "*")
 		}
 	}
 }
