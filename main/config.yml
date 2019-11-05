@@ -3,8 +3,13 @@ server:
   routers:
     - prefix: /api
       middlewares:
-        - type: cors
         - type: dump-to-log
+        - type: request-header
+          config:
+            hello: world
+        - type: response-header
+          config:
+            Access-Control-Allow-Origin: "*"
       handlers:
         - path: /ip
           type: reverse-proxy

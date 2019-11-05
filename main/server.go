@@ -35,19 +35,17 @@ func main() {
 				rModule.Use(middlewares.NewDumpToLogMiddleware())
 			case "dump-to-pubsub":
 				rModule.Use(middlewares.NewDumpToPubSubMiddleware())
+			case "request-header":
+				rModule.Use(middlewares.NewRequestHeaderWriteMiddlwware(middlewareConf.Config))
+			case "response-header":
+				rModule.Use(middlewares.NewResponseHeaderWriteMiddlwware(middlewareConf.Config))
 			default:
 			}
 		}
 		for _, handlerConf := range routerConf.Handlers {
 			switch handlerType := handlerConf.Type; handlerType {
 			case "reverse-proxy":
-				handlers.HandleProxyFunc(rModule, handlerConf.Path, handlerConf.Config["url"], func(res http.ResponseWriter, req *http.Request) {
-					for k, v := range handlerConf.Config {
-						if k != "url" {
-							req.Header.Set(k, v)
-						}
-					}
-				})
+				handlers.HandleProxyFunc(rModule, handlerConf.Path, handlerConf.Config)
 			default:
 			}
 		}
