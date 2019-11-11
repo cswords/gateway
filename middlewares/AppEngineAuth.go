@@ -9,13 +9,14 @@ import (
 // CronMiddleware TODO
 func CronMiddleware(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		isGoogle := r.Header.Get("X-Appengine-Cron")
+		isAppEngineCron := r.Header.Get("X-Appengine-Cron")
+		isCloudScheduler := r.Header.Get("X-CloudScheduler")
 
-		if isGoogle == "true" {
+		if isAppEngineCron == "true" || isCloudScheduler == "true" {
 			log.Printf("Triggering a Google Appengine cron job.")
 			next.ServeHTTP(w, r)
 		} else {
-			log.Println("Invalid Cron: X-Appengine-Cron request header value is not true.")
+			log.Println("Invalid Cron: X-Appengine-Cron/X-CloudScheduler request header value is not true.")
 			http.Error(w, "Forbidden", http.StatusForbidden)
 		}
 	})
