@@ -29,7 +29,7 @@ func NewProxyHandler(rawurl string) func(http.ResponseWriter, *http.Request) {
 			rawQuery := r.URL.RawQuery
 			r.Host = targetURL.Host
 			r.URL, _ = url.Parse(funcURL)
-			r.URL.RawQuery = rawQuery
+			r.URL.RawQuery = strings.Join([]string{r.URL.RawQuery, rawQuery}, "&")
 			// request will be copied
 			reverseProxy.ServeHTTP(w, r)
 		} else {
