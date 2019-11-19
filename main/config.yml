@@ -11,7 +11,7 @@ server:
           config:
             Access-Control-Allow-Origin: "*"
       handlers:
-        - path: /ip/hh
+        - path: /ip
           type: reverse-proxy
           config: 
             target: "https://api.ipify.org?format=json"
