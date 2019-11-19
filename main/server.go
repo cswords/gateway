@@ -45,7 +45,7 @@ func main() {
 		for _, handlerConf := range routerConf.Handlers {
 			switch handlerType := handlerConf.Type; handlerType {
 			case "reverse-proxy":
-				handlers.HandleProxyFunc(rModule, handlerConf.Path, handlerConf.Config)
+				rModule.Handle(handlerConf.Path, handlers.NewProxyHandler(handlerConf))
 			default:
 			}
 		}
