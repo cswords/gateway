@@ -23,7 +23,7 @@ func NewProxyHandler(config map[string]string) http.HandlerFunc {
 
 	return func(w http.ResponseWriter, r *http.Request) {
 
-		if !strings.HasPrefix(r.URL.Path, pathBase) {
+		if !strings.HasPrefix(r.URL.RawPath, pathBase) {
 			err := fmt.Errorf("Request URL %q does not match path base %q", r.URL.String(), pathBase)
 			panic(err)
 		}
@@ -33,7 +33,7 @@ func NewProxyHandler(config map[string]string) http.HandlerFunc {
 
 			r.URL.Scheme = targetURL.Scheme
 			r.URL.Host = targetURL.Host
-			r.URL.RawPath = targetURL.RawPath + r.URL.Path[len(pathBase):len(r.URL.RawPath)]
+			r.URL.RawPath = targetURL.RawPath + r.URL.RawPath[len(pathBase):len(r.URL.RawPath)]
 			r.URL.RawQuery = strings.Join([]string{targetURL.RawQuery, r.URL.RawQuery}, "&")
 
 			log.Println("Request url rewriten to %q", r.URL.String())
