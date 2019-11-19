@@ -14,4 +14,5 @@ server:
         - path: /ip
           type: reverse-proxy
           config: 
-            url: "https://api.ipify.org?format=json"
+            target: "https://api.ipify.org?format=json"
+            pathBase: /api/ip
