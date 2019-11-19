@@ -38,7 +38,7 @@ func NewProxyHandler(config map[string]string) http.HandlerFunc {
 			r.Host = r.URL.Host
 			r.RequestURI = r.URL.RequestURI()
 
-			log.Println("Request url rewriten to %q", r.URL.String())
+			log.Println("Request url rewriten to ", r.URL.String())
 
 			// request will be copied
 			reverseProxy.ServeHTTP(w, r)
