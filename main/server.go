@@ -2,6 +2,7 @@ package main
 
 import (
 	"net/http"
+	"os"
 
 	"github.com/Good-Will/gateway/configuration"
 	"github.com/Good-Will/gateway/handlers"
@@ -14,7 +15,8 @@ func main() {
 	r := mux.NewRouter()
 	r.Use(middlewares.LoggingMiddleware)
 
-	conf := configuration.LoadConfig()
+	loc := os.Getenv("GW_CONFIG_LOCATION")
+	conf := configuration.LoadConfig(loc, configuration.FromLocal, configuration.FromGCS)
 
 	for _, routerConf := range conf.Server.Routers {
 		rModule := r.PathPrefix(routerConf.Prefix).Subrouter()

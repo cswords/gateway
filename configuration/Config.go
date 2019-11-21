@@ -1,7 +1,10 @@
 package configuration
 
 import (
+	"io/ioutil"
 	"log"
+	"path/filepath"
+	"strings"
 
 	"gopkg.in/yaml.v2"
 )
@@ -47,14 +50,38 @@ func (c *Config) loadBinary(b []byte) *Config {
 	return c
 }
 
-// Load TODO
-func (c *Config) Load(loaders ...(func() []byte)) *Config {
+// LoadConfig TODO
+func LoadConfig(location string, loaders ...(func(string) []byte)) *Config {
+	c := &(Config{})
 	var b []byte
+	if len(loaders) == 0 {
+		loaders = []func(string) []byte{FromLocal}
+	}
 	for _, loader := range loaders {
-		b = loader()
+		b = loader(location)
 		if b != nil {
 			break
 		}
 	}
 	return c.loadBinary(b)
+}
+
+// FromLocal TODO
+func FromLocal(loc string) []byte {
+
+	if !strings.HasPrefix(loc, "./") {
+		return nil
+	}
+
+	folder, err := filepath.Abs(filepath.Dir("."))
+	if err != nil {
+		log.Println("load binary from local err", err)
+		return nil
+	}
+	data, err := ioutil.ReadFile(folder + strings.TrimPrefix(loc, "."))
+	if err != nil {
+		log.Println("load binary from local  err", err)
+		return nil
+	}
+	return data
 }
