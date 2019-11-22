@@ -30,6 +30,9 @@ func NewProxyHandler(config map[string]string) http.HandlerFunc {
 
 		if r.Method != http.MethodOptions {
 
+			log.Println("Request url is ", r.URL.String())
+			log.Println("Target url is ", targetURL.String())
+
 			r.URL.Scheme = targetURL.Scheme
 			r.URL.Host = targetURL.Host
 			r.URL.Path = targetURL.Path + r.URL.Path[len(pathBase):len(r.URL.Path)]
