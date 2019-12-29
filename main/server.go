@@ -8,9 +8,9 @@ import (
 	"github.com/Good-Will/handlers"
 	"github.com/Good-Will/middlewares"
 
-	gcpConfig "github.com/Good-Will/google-cloud/configuration"
-	gcpMiddlewares "github.com/Good-Will/google-cloud/middlewares"
-	oktaMiddlwares "github.com/Good-Will/okta-oidc/middlewares"
+	gcpConfig "github.com/Good-Will/gcloud/configuration"
+	gcpMiddlewares "github.com/Good-Will/gcloud/middlewares"
+	oktaMiddlwares "github.com/Good-Will/okta/middlewares"
 
 	"github.com/gorilla/mux"
 )
