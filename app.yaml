@@ -1,2 +1,4 @@
 runtime: go112
 service: gateway
+
+main: ./main
