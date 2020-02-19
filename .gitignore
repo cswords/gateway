@@ -16,3 +16,4 @@ go.sum
 __debug_bin
 main/go.mod
 main/main
+server

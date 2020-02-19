@@ -26,8 +26,8 @@ func main() {
 		rModule := r.PathPrefix(routerConf.Prefix).Subrouter()
 		for _, middlewareConf := range routerConf.Middlewares {
 			switch middlewareType := middlewareConf.Type; middlewareType {
-			case "cors":
-				rModule.Use(mux.CORSMethodMiddleware(rModule))
+			// case "cors":
+			// 	rModule.Use(mux.CORSMethodMiddleware(rModule)) // We recommend to use response-header middleware to enforce cors settings.
 			case "auth-okta":
 				clientID := middlewareConf.Config["client_id"]
 				issuer := middlewareConf.Config["issuer"]
@@ -40,7 +40,7 @@ func main() {
 			case "dump-to-log":
 				rModule.Use(middlewares.NewDumpToLogMiddleware())
 			case "dump-to-pubsub":
-				rModule.Use(gcpMiddlewares.NewDumpToPubSubMiddleware())
+				rModule.Use(gcpMiddlewares.NewDumpToPubSubMiddleware("GATEWAY_ROUNDTRIPS"))
 			case "request-header":
 				rModule.Use(middlewares.NewRequestHeaderWriteMiddlwware(middlewareConf.Config))
 			case "response-header":
