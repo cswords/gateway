@@ -31,7 +31,7 @@ func main() {
 			case "auth-okta":
 				clientID := middlewareConf.Config["client_id"]
 				issuer := middlewareConf.Config["issuer"]
-				c := oktaMiddlwares.NewOIDCClient(clientID, issuer)
+				c := oktaMiddlwares.NewOIDCClient(clientID, issuer, nil)
 				rModule.Use(oktaMiddlwares.NewOktaAuthMiddleware(c))
 			case "auth-appengine-cron":
 				rModule.Use(gcpMiddlewares.CronMiddleware)
