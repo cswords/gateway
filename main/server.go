@@ -28,11 +28,6 @@ func main() {
 			switch middlewareType := middlewareConf.Type; middlewareType {
 			// case "cors":
 			// 	rModule.Use(mux.CORSMethodMiddleware(rModule)) // We recommend to use response-header middleware to enforce cors settings.
-			case "auth-okta":
-				clientID := middlewareConf.Config["client_id"]
-				issuer := middlewareConf.Config["issuer"]
-				c := oktaMiddlwares.NewOIDCClient(clientID, issuer, nil)
-				rModule.Use(oktaMiddlwares.NewOktaAuthMiddleware(c))
 			case "auth-appengine-cron":
 				rModule.Use(gcpMiddlewares.CronMiddleware)
 			case "auth-appengine-task":
